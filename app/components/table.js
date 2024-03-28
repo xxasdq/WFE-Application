@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import './table.css';
 
@@ -76,7 +77,9 @@ function TD({ bookings }) {
           colSpan={booking.colspan}
           className={booking._id ? 'booked' : ''}
         >
-          {booking.vid}
+          <Link href={`/booking/${booking.vid}/edit/${booking._id}`}>
+            <small style={{ color: 'white' }}>{booking.vid && 'Booked'}</small>
+          </Link>
         </td>
       ))}
     </>

@@ -1,13 +1,14 @@
 'use client';
-import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import '../../style.css';
 
 export default function Form() {
   const params = useParams();
+  const router = useRouter();
   const [data, setData] = useState({
     type: params.type[1], // create or edit
-    id: params.type[2] || '', // booking id -> type == edit -> params.type[1]
+    _id: params.type[2] || '', // booking id -> type == edit -> params.type[1]
     vid: params.type[0],
     position: '',
     date: new Date().toISOString().split('T')[0],
@@ -15,10 +16,27 @@ export default function Form() {
     end: '00:00',
   });
 
-  const getData = (e) => {
+  useEffect(() => {
+    if (params.type[2]) {
+      (async function () {
+        const data = await fetch(
+          `http://localhost:3000/api/schedule/${params.type[0]}/${params.type[1]}/${params.type[2]}`,
+          {
+            method: 'POST',
+            body: JSON.stringify({ _id: params.type[2] }),
+            headers: { 'Content-Type': 'application/json' },
+          }
+        );
+        const result = await data.json();
+        setData({ ...data, ...result });
+      })();
+    }
+  }, [params.type[2]]);
+
+  function getData(e) {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
-  };
+  }
 
   async function booking(e) {
     e.preventDefault();
@@ -31,6 +49,11 @@ export default function Form() {
         headers: { 'Content-Type': 'application/json' },
       }
     );
+    const result = await res.json();
+
+    if (result) {
+      router.push('/');
+    }
   }
 
   return (

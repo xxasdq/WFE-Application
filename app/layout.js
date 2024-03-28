@@ -32,7 +32,9 @@ export default async function RootLayout({ children }) {
 
           {data && (
             <span>
-              <Link href={`/booking/${data.data.vid}/create`}>Book Now</Link>
+              {data.data && (
+                <Link href={`/booking/${data.data.vid}/create`}>Book Now</Link>
+              )}
               <Link href={'/logout'}>Logout</Link>
             </span>
           )}

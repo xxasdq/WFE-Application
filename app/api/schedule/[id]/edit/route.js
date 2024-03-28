@@ -1,17 +1,26 @@
+import { ObjectId } from 'mongodb';
 import { DB } from '../../../auth/utils';
 
 export async function POST(req, res) {
   const body = await req.json();
+  const { _id, position, date, start, end } = body;
 
   const db = await DB();
-  const collection = await db.collection('schedule');
-  delete body.type;
+  const collection = db.collection('schedule');
+  const result = await collection.findOneAndUpdate(
+    { _id: new ObjectId(_id) },
+    {
+      $set: {
+        position,
+        date,
+        start,
+        end,
+      },
+    },
+    {
+      returnOriginal: false,
+    }
+  );
 
-  const newData = body;
-  delete newData.id;
-  const result = await collection.findOneAndUpdate({ _id: body.id }, newData, {
-    returnOriginal: false,
-  });
-
-  return Response.json('ok');
+  return Response.json(true);
 }
