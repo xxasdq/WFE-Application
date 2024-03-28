@@ -20,7 +20,7 @@ table#schedule {
   }
 
   .booked {
-    background-color: rgb(25, 104, 207);
+    background-color: #0d2c99;
     border-left: 1px solid rgb(228, 243, 255);
     border-right: 1px solid rgb(228, 243, 255);
     color: rgb(209, 209, 209);

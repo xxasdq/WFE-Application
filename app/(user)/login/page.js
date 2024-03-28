@@ -1,7 +1,12 @@
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import '../style.css';
 
 export default function Login() {
+  if (cookies().get('IVAO')) {
+    redirect('/');
+  }
+
   return (
     <form id='login_form' action={login}>
       <h3>Account Login</h3>
@@ -39,6 +44,8 @@ async function login(formData) {
   });
 
   if (await data.ok) {
+    const { token } = await data.json();
+    cookies().set('IVAO', token);
     redirect('/');
   }
 }

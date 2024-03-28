@@ -13,8 +13,8 @@ async function CreateDB() {
     console.log(`Connected to the DB: ${db_name}`);
 
     CreateCollection(db, 'users', [
-      { username: 'Juan', vid: 123456, password: 'Pass123' },
-      { username: 'Alvaro', vid: 987654, password: 'Pass987' },
+      { vid: 123456, password: 'Pass123' },
+      { vid: 987654, password: 'Pass987' },
     ]);
     CreateCollection(db, 'schedule', [
       {

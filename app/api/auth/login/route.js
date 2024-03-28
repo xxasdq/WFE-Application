@@ -1,4 +1,4 @@
-import { serialize } from 'cookie';
+import { cookies } from 'next/headers';
 import { DB, decrypt, generateToken } from '../utils';
 
 export async function POST(req, res) {
@@ -9,21 +9,10 @@ export async function POST(req, res) {
   const result = await collection.findOne({ vid: Number(vid) });
 
   if (await decrypt(password, result.password)) {
-    const cookieOptions = {
-      maxAge: 3600,
-      path: '/',
-      httpOnly: true,
-      secure: true,
-    };
-    const cookieSerialized = serialize(
-      'IVAO',
-      generateToken(result),
-      cookieOptions
-    );
+    delete result.password;
 
-    res.setHeaders('Set-Cookie', cookieSerialized);
-
-    return Response.json({ message: 'Authorized' });
+    const token = await generateToken(result);
+    return Response.json({ message: 'Authorized', token });
   } else {
     return Response.json({ message: 'Not authorized' });
   }

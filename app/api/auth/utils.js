@@ -24,7 +24,7 @@ async function encrypt(psw) {
   return hash;
 }
 async function decrypt(psw, encPsw) {
-  return bcrypt.compare(psw, encPsw);
+  return await bcrypt.compare(psw, encPsw);
 }
 
 // TOKEN

@@ -5,4 +5,7 @@ export async function POST(req, res) {
 
   const db = await DB();
   const collection = await db.collection('schedule');
+  const result = await collection.deleteOne({ _id: body.id });
+
+  return Response.json('ok');
 }
