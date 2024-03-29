@@ -7,9 +7,9 @@ export default function Form() {
   const params = useParams();
   const router = useRouter();
   const [data, setData] = useState({
+    vid: params.type[0], // vid
     type: params.type[1].toString(), // create or edit
-    _id: params.type[2] || '', // booking id -> type == edit -> params.type[1]
-    vid: params.type[0],
+    _id: params.type[2] || '', // booking id
     position: '',
     date: new Date().toISOString().split('T')[0],
     start: '00:00',
@@ -20,12 +20,7 @@ export default function Form() {
     if (params.type[2]) {
       (async function () {
         const data = await fetch(
-          `http://localhost:3000/api/schedule/${params.type[0]}/${params.type[1]}/${params.type[2]}`,
-          {
-            method: 'POST',
-            body: JSON.stringify({ _id: params.type[2] }),
-            headers: { 'Content-Type': 'application/json' },
-          }
+          `http://localhost:3000/api/schedule/${params.type[0]}/${params.type[1]}/${params.type[2]}`
         );
         const result = await data.json();
         setData({ ...data, ...result });
@@ -52,6 +47,7 @@ export default function Form() {
     const result = await res.json();
 
     if (result) {
+      setData({ ...data, ...result });
       router.push('/');
     }
   }

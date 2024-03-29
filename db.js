@@ -8,7 +8,7 @@ async function CreateDB() {
   try {
     const client = new MongoClient(uri);
     await client.connect();
-    const db = await client.db(db_name);
+    const db = client.db(db_name);
 
     console.log(`Connected to the DB: ${db_name}`);
 
@@ -16,6 +16,7 @@ async function CreateDB() {
       { vid: 123456, password: 'Pass123' },
       { vid: 987654, password: 'Pass987' },
     ]);
+
     CreateCollection(db, 'schedule', [
       {
         vid: 987654,
@@ -26,32 +27,19 @@ async function CreateDB() {
       },
       {
         vid: 123456,
-        position: 'LEPA_S_TWR',
-        date: '2024-03-24',
-        start: '00:00',
-        end: '02:00',
-      },
-      {
-        vid: 987654,
         position: 'LEMD_S_TWR',
         date: '2024-03-24',
         start: '00:00',
         end: '02:00',
-      },
-      {
-        vid: 987654,
-        position: 'LEMD_S_TWR',
-        date: '2024-02-23',
-        start: '18:00',
-        end: '20:00',
       },
     ]);
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
   }
 }
 
 async function CreateCollection(db, name, data) {
+  // checks if the collection exists to not create it.
   const collections = await db.listCollections().toArray();
   const exists = collections.some((collection) => collection.name === name);
 
@@ -60,6 +48,7 @@ async function CreateCollection(db, name, data) {
 
     data.forEach(async (obj) => {
       if (name == 'users') {
+        // this conditional is because there is no route or page to create users.
         const newPassword = await encrypt(obj.password);
         obj['password'] = newPassword;
         await collection.insertOne(obj);
