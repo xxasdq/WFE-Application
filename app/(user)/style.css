@@ -19,8 +19,10 @@ form {
     margin: 10px auto;
   }
 
-  h3 {
+  div {
     border-bottom: 1px solid rgb(220, 224, 220);
-    padding-bottom: 20px;
+    h3 {
+      padding-bottom: 20px;
+    }
   }
 }

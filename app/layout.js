@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { checkToken } from './api/auth/utils';
-import { redirect } from 'next/navigation';
+
 import './globals.css';
 
 const ns = Nunito_Sans({ subsets: ['latin'] });
@@ -35,7 +35,7 @@ export default async function RootLayout({ children }) {
               {data.data && (
                 <Link href={`/booking/${data.data.vid}/create`}>Book Now</Link>
               )}
-              <Link href={'/logout'}>Logout</Link>
+              <Link href={'/api/auth/logout'}>Logout</Link>
             </span>
           )}
         </header>
@@ -44,10 +44,4 @@ export default async function RootLayout({ children }) {
       </body>
     </html>
   );
-}
-
-async function logout() {
-  'use server';
-  cookies().delete('IVAO');
-  redirect('/');
 }

@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers';
 import { DB, decrypt, generateToken } from '../utils';
 
 export async function POST(req, res) {

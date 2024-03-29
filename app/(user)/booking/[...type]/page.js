@@ -7,7 +7,7 @@ export default function Form() {
   const params = useParams();
   const router = useRouter();
   const [data, setData] = useState({
-    type: params.type[1], // create or edit
+    type: params.type[1].toString(), // create or edit
     _id: params.type[2] || '', // booking id -> type == edit -> params.type[1]
     vid: params.type[0],
     position: '',
@@ -56,9 +56,36 @@ export default function Form() {
     }
   }
 
+  async function buttonAction(e) {
+    if (e.target.innerText !== 'Delete') {
+      router.push('/');
+    } else {
+      const res = await fetch(
+        `http://localhost:3000/api/schedule/${params.type[0]}/${params.type[1]}`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ _id: data._id }),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
+    }
+  }
+
   return (
     <form id='booking_form' onSubmit={booking}>
-      <h3>Book Now / {params.type[1]}</h3>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <h3>Book Now / {params.type[1]}</h3>
+        <button onClick={buttonAction}>
+          {params.type[1] == 'edit' ? 'Delete' : 'Cancel'}
+        </button>
+      </div>
       <div>
         <label htmlFor='vid'>VID:</label>
         <input
@@ -91,31 +118,40 @@ export default function Form() {
           onChange={getData}
         />
       </div>
-      <div>
-        <label htmlFor='start'>Start</label>
-        <input
-          type='time'
-          name='start'
-          step={3600}
-          min='00:00'
-          max='23:00'
-          value={data.start}
-          onChange={getData}
-        />
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          textAlign: 'center',
+        }}
+      >
+        <div>
+          <label htmlFor='start'>Start</label>
+          <input
+            type='time'
+            name='start'
+            step={3600}
+            min='00:00'
+            max='23:00'
+            value={data.start}
+            onChange={getData}
+          />
+        </div>
+        <div>
+          <label htmlFor='end'>End</label>
+          <input
+            type='time'
+            name='end'
+            step={3600}
+            min='00:00'
+            max='23:00'
+            value={data.end}
+            onChange={getData}
+          />
+        </div>
       </div>
-      <div>
-        <label htmlFor='end'>End</label>
-        <input
-          type='time'
-          name='end'
-          step={3600}
-          min='00:00'
-          max='23:00'
-          value={data.end}
-          onChange={getData}
-        />
-      </div>
-      <button type='submit' className='btn'>
+      <button className='btn'>
         {params.type[1].toLowerCase() == 'create' ? 'Book Now' : 'Update'}
       </button>
     </form>
