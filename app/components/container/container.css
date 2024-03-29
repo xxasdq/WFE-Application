@@ -1,0 +1,11 @@
+#container {
+  width: 90%;
+  margin: 30px auto 0;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(40%);
+}

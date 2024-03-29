@@ -1,6 +1,10 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Container from '@/app/components/container/container';
+import Input from '@/app/components/form/input';
+import Button from '@/app/components/form/button';
+import booking from './actions/booking';
 import '../../style.css';
 
 export default function Form() {
@@ -10,10 +14,6 @@ export default function Form() {
     vid: params.type[0], // vid
     type: params.type[1].toString(), // create or edit
     _id: params.type[2] || '', // booking id
-    position: '',
-    date: new Date().toISOString().split('T')[0],
-    start: '00:00',
-    end: '00:00',
   });
 
   useEffect(() => {
@@ -26,31 +26,7 @@ export default function Form() {
         setData({ ...data, ...result });
       })();
     }
-  }, [params.type[2]]);
-
-  function getData(e) {
-    const { name, value } = e.target;
-    setData({ ...data, [name]: value });
-  }
-
-  async function booking(e) {
-    e.preventDefault();
-
-    const res = await fetch(
-      `http://localhost:3000/api/schedule/${params.type[0]}/${params.type[1]}`,
-      {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
-    const result = await res.json();
-
-    if (result) {
-      setData({ ...data, ...result });
-      router.push('/');
-    }
-  }
+  }, []);
 
   async function buttonAction(e) {
     if (e.target.innerText !== 'Delete') {
@@ -67,89 +43,62 @@ export default function Form() {
     }
   }
 
+  const bookNow = booking.bind(null, params.type[1]);
+
   return (
-    <form id='booking_form' onSubmit={booking}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <h3>Book Now / {params.type[1]}</h3>
-        <button onClick={buttonAction}>
-          {params.type[1] == 'edit' ? 'Delete' : 'Cancel'}
-        </button>
-      </div>
-      <div>
-        <label htmlFor='vid'>VID:</label>
-        <input
-          type='text'
-          name='vid'
-          value={params.type[0]}
-          maxLength={6}
-          readOnly
-          onChange={getData}
-        />
-      </div>
-      <div>
-        <label htmlFor='position'>Position:</label>
-        <input
-          type='text'
-          name='position'
-          maxLength={20}
-          placeholder='XXXX_TWR/APP/CTR'
-          value={data.position}
-          onChange={getData}
-        />
-      </div>
-      <div>
-        <label htmlFor='date'>Date</label>
-        <input
-          type='date'
-          name='date'
-          min={new Date().toISOString().split('T')[0]}
-          value={data.date}
-          onChange={getData}
-        />
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          textAlign: 'center',
-        }}
-      >
+    <Container>
+      <form id='booking_form' action={bookNow}>
+        <div id='form-header'>
+          <h3>Book Now / {params.type[1]}</h3>
+          <button onClick={buttonAction}>
+            {params.type[1] == 'edit' ? 'Delete' : 'Cancel'}
+          </button>
+        </div>
         <div>
-          <label htmlFor='start'>Start</label>
-          <input
-            type='time'
-            name='start'
-            step={3600}
-            min='00:00'
-            max='23:00'
-            value={data.start}
-            onChange={getData}
+          <label htmlFor='vid'>VID:</label>
+          <Input
+            type='text'
+            name='vid'
+            max={6}
+            readOnly
+            value={params.type[0]}
           />
         </div>
         <div>
-          <label htmlFor='end'>End</label>
-          <input
-            type='time'
-            name='end'
-            step={3600}
-            min='00:00'
-            max='23:00'
-            value={data.end}
-            onChange={getData}
+          <label htmlFor='position'>Position:</label>
+          <Input
+            type='text'
+            name='position'
+            max={20}
+            placeholder='XXXX_TWR/APP/CTR'
           />
         </div>
-      </div>
-      <button className='btn'>
-        {params.type[1].toLowerCase() == 'create' ? 'Book Now' : 'Update'}
-      </button>
-    </form>
+        <div>
+          <label htmlFor='date'>Date</label>
+          <Input
+            type='date'
+            name='date'
+            min={new Date().toISOString().split('T')[0]}
+            value={new Date().toISOString().split('T')[0]}
+          />
+        </div>
+        <div id='time'>
+          <div>
+            <label htmlFor='start'>Start</label>
+            <Input type='time' name='start' defaultValue='00:00' />
+          </div>
+          <div>
+            <label htmlFor='end'>End</label>
+            <Input type='time' name='end' defaultValue='00:00' />
+          </div>
+        </div>
+        <Button
+          type='submit'
+          name={
+            params.type[1].toLowerCase() == 'create' ? 'Book Now' : 'Update'
+          }
+        />
+      </form>
+    </Container>
   );
 }

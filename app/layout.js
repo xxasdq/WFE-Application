@@ -1,9 +1,8 @@
 import { Nunito_Sans } from 'next/font/google';
+import { cookies } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
-import { cookies } from 'next/headers';
 import { checkToken } from './api/auth/utils';
-
 import './globals.css';
 
 const ns = Nunito_Sans({ subsets: ['latin'] });
@@ -13,8 +12,8 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const cookie = cookies().get('IVAO');
-  const data = cookie ? await checkToken(cookie.value) : null;
+  const cookie = cookies().has('IVAO');
+  const { data } = cookie && (await checkToken(cookies().get('IVAO').value));
 
   return (
     <html lang='en'>
@@ -24,23 +23,21 @@ export default async function RootLayout({ children }) {
             <Image
               src={'/logo_white.svg'}
               width={200}
-              height={80}
+              height={90}
               alt='ivao_logo'
               priority
             />
           </Link>
 
-          {data && (
-            <span>
-              {data.data && (
-                <Link href={`/booking/${data.data.vid}/create`}>Book Now</Link>
-              )}
+          {cookie && (
+            <nav>
+              <Link href={data && `/booking/${data.vid}/create`}>Book Now</Link>
               <Link href={'/api/auth/logout'}>Logout</Link>
-            </span>
+            </nav>
           )}
         </header>
 
-        <div>{children}</div>
+        <main>{children}</main>
       </body>
     </html>
   );

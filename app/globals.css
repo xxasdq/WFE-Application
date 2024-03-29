@@ -4,44 +4,30 @@
   box-sizing: border-box;
   border: none;
   background-color: transparent;
-  color: rgb(45, 45, 45);
+  color: rgb(70, 70, 70);
   text-decoration: none;
 }
 
-/* body {
-  background-color: rgb(228, 243, 255);
-} */
-
 header {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
 
-  span {
-    display: inherit;
-    justify-content: center;
+  nav {
+    margin-right: 30px;
+    width: 140px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     align-items: center;
-    gap: 20px;
 
-    * {
-      cursor: pointer;
-      &:hover {
-        text-decoration: underline;
-      }
+    a:hover {
+      text-decoration: underline;
     }
   }
 }
 
 hr {
   border-bottom: 1px solid rgb(209, 209, 209);
-}
-
-.btn,
-button {
-  cursor: pointer;
-  background-color: #0d2c99;
-  color: rgb(228, 243, 255);
-  padding: 10px;
-  border-radius: 5px;
 }

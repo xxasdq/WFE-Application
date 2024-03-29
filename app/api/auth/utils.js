@@ -1,6 +1,7 @@
+const { MongoClient } = require('mongodb');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { MongoClient } = require('mongodb');
+const jose = require('jose');
 
 // DB
 async function DB() {
@@ -11,8 +12,8 @@ async function DB() {
     const client = new MongoClient(uri);
     await client.connect();
     return client.db(db_name);
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
   }
 }
 
@@ -23,12 +24,13 @@ async function encrypt(psw) {
 
   return hash;
 }
+
 async function decrypt(psw, encPsw) {
   return await bcrypt.compare(psw, encPsw);
 }
 
 // TOKEN
-const KEY = 'secretXX';
+const KEY = new TextEncoder().encode('secretXX');
 async function generateToken(data) {
   return jwt.sign({ data }, KEY, { expiresIn: '1h' });
 }
@@ -36,9 +38,15 @@ async function generateToken(data) {
 async function checkToken(token) {
   try {
     return jwt.verify(token, KEY);
-  } catch (error) {
-    return Response.json(error);
+  } catch (err) {
+    console.error(err);
   }
 }
 
-module.exports = { DB, encrypt, decrypt, generateToken, checkToken };
+module.exports = {
+  DB,
+  encrypt,
+  decrypt,
+  generateToken,
+  checkToken,
+};
