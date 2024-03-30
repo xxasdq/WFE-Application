@@ -14,8 +14,14 @@ export default function Form() {
     vid: params.type[0], // vid
     type: params.type[1].toString(), // create or edit
     _id: params.type[2] || '', // booking id
+    position: '',
+    date: new Date().toISOString().split('T')[0],
+    start: '00:00',
+    end: '00:00',
+    editable: false, // readOnly = false => editable or readOnly = true => no editable
   });
 
+  // data recovered for update
   useEffect(() => {
     if (params.type[2]) {
       (async function () {
@@ -23,45 +29,46 @@ export default function Form() {
           `http://localhost:3000/api/schedule/${params.type[0]}/${params.type[1]}/${params.type[2]}`
         );
         const result = await data.json();
-        setData({ ...data, ...result });
+        setData(result);
       })();
     }
-  }, []);
+  }, [params.type[2]]);
 
+  // delete or cancel action
   async function buttonAction(e) {
-    if (e.target.innerText !== 'Delete') {
-      router.push('/');
-    } else {
-      const res = await fetch(
-        `http://localhost:3000/api/schedule/${params.type[0]}/${params.type[1]}`,
+    if (e.target.innerText == 'Delete') {
+      await fetch(
+        `http://localhost:3000/api/schedule/${params.type[0]}/delete`,
         {
           method: 'POST',
-          body: JSON.stringify({ _id: data._id }),
+          body: JSON.stringify({ _id: data._id, vid: data.vid }),
           headers: { 'Content-Type': 'application/json' },
         }
       );
     }
+    router.push('/');
   }
 
   const bookNow = booking.bind(null, params.type[1]);
 
   return (
     <Container>
+      <button id='buttonAction' onClick={buttonAction}>
+        {params.type[1] == 'edit' ? 'Delete' : 'Cancel'}
+      </button>
       <form id='booking_form' action={bookNow}>
         <div id='form-header'>
           <h3>Book Now / {params.type[1]}</h3>
-          <button onClick={buttonAction}>
-            {params.type[1] == 'edit' ? 'Delete' : 'Cancel'}
-          </button>
         </div>
+        <Input type='hidden' name='_id' value={params.type[2]} />
         <div>
           <label htmlFor='vid'>VID:</label>
           <Input
             type='text'
             name='vid'
-            max={6}
-            readOnly
+            maxl={6}
             value={params.type[0]}
+            readOnly
           />
         </div>
         <div>
@@ -69,8 +76,13 @@ export default function Form() {
           <Input
             type='text'
             name='position'
-            max={20}
+            maxl={20}
             placeholder='XXXX_TWR/APP/CTR'
+            readOnly={data.editable}
+            value={data.position}
+            onChange={(e) =>
+              setData({ ...data, [e.target.name]: e.target.value })
+            }
           />
         </div>
         <div>
@@ -79,19 +91,40 @@ export default function Form() {
             type='date'
             name='date'
             min={new Date().toISOString().split('T')[0]}
-            value={new Date().toISOString().split('T')[0]}
+            readOnly={data.editable}
+            value={data.date}
+            onChange={(e) =>
+              setData({ ...data, [e.target.name]: e.target.value })
+            }
           />
         </div>
         <div id='time'>
           <div>
             <label htmlFor='start'>Start</label>
-            <Input type='time' name='start' defaultValue='00:00' />
+            <Input
+              type='time'
+              name='start'
+              value={data.start}
+              readOnly={data.editable}
+              onChange={(e) =>
+                setData({ ...data, [e.target.name]: e.target.value })
+              }
+            />
           </div>
           <div>
             <label htmlFor='end'>End</label>
-            <Input type='time' name='end' defaultValue='00:00' />
+            <Input
+              type='time'
+              name='end'
+              readOnly={data.editable}
+              value={data.end}
+              onChange={(e) =>
+                setData({ ...data, [e.target.name]: e.target.value })
+              }
+            />
           </div>
         </div>
+
         <Button
           type='submit'
           name={

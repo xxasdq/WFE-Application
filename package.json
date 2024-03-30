@@ -2,6 +2,7 @@
   "name": "ivao",
   "version": "0.1.0",
   "private": true,
+  "author": "Sairi Conejo Flores (666993) <cxde.test@gmail.com>",
   "scripts": {
     "dev": "concurrently \"next dev\" \"node ./db.js\"",
     "build": "next build",

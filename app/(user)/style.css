@@ -8,13 +8,6 @@ form {
   padding: 20px;
   margin: auto;
 
-  #form-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   #time {
     display: flex;
     flex-direction: row;

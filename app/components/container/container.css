@@ -1,6 +1,7 @@
 #container {
   width: 90%;
   margin: 30px auto 0;
+  position: relative;
 }
 
 .center {
@@ -8,4 +9,12 @@
   justify-content: center;
   align-items: center;
   transform: translateY(40%);
+  position: relative;
+}
+
+#buttonAction {
+  cursor: pointer;
+  position: absolute;
+  left: 60%;
+  top: 5.5%;
 }
